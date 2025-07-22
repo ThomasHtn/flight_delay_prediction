@@ -113,3 +113,26 @@ Cela démarre :
 - **API** : http://localhost:8000/docs
 - **Interface Streamlit** : http://localhost:8501
 - **MLflow UI** : http://localhost:5000
+
+---
+
+## ⚗️ Alembic
+
+### Créer une nouvelle migration
+Depuis la racine du projet :
+```batch
+alembic -c database/alembic.ini revision --autogenerate -m "nom de la migration"
+```
+
+### Appliquer la migration
+Depuis la racine du projet :
+```batch
+alembic -c database/alembic.ini upgrade head
+```
+
+### Remplir la base de données
+Depuis la racine du projet :
+```batch
+make populate-db
+```
+Cela va utiliser par défaut le fichier **"cleaned_data.csv"** pour remplir la base de données.

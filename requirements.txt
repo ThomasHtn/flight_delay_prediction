@@ -4,3 +4,11 @@ numpy
 seaborn
 skimpy
 scikit-learn
+alembic
+sqlalchemy
+pydantic
+fastapi
+pytest
+joblib
+loguru
+mlflow
