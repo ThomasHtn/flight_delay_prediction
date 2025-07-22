@@ -121,13 +121,13 @@ Cela démarre :
 ### Créer une nouvelle migration
 Depuis la racine du projet :
 ```batch
-alembic -c database/alembic.ini revision --autogenerate -m "nom de la migration"
+alembic revision --autogenerate -m "nom de la migration"
 ```
 
 ### Appliquer la migration
 Depuis la racine du projet :
 ```batch
-alembic -c database/alembic.ini upgrade head
+alembic upgrade head
 ```
 
 ### Remplir la base de données

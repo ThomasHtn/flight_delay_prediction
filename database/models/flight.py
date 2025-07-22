@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Float, Integer, String
+from sqlalchemy import Boolean, Column, Date, Float, ForeignKey, Integer, String
 
 from database.base import Base
 
@@ -8,39 +8,38 @@ class Flight(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
 
-    # Date information
     year = Column(Integer)
     quarter = Column(Integer)
     month = Column(Integer)
     day_of_month = Column(Integer)
     day_of_week = Column(Integer)
+    fl_date = Column(Date)
 
-    # Airline information
-    unique_carrier = Column(String)
+    unique_carrier = Column(String, ForeignKey("airlines.unique_carrier"))
+    flight_num = Column(String)
+    tail_num = Column(String)
 
-    # Origin airport
-    origin = Column(String)
-    origin_state_abr = Column(String)
-    origin_state_fips = Column(Float)
-    origin_wac = Column(Float)
+    origin = Column(String, ForeignKey("airports.code"))
+    dest = Column(String, ForeignKey("airports.code"))
 
-    # Destination airport
-    dest = Column(String)
-    dest_state_abr = Column(String)
-    dest_state_fips = Column(Float)
-    dest_wac = Column(Float)
-
-    # Schedule and time details
     crs_dep_time = Column(Float)
     dep_time_blk = Column(String)
     taxi_out = Column(Float)
     taxi_in = Column(Float)
     crs_arr_time = Column(Float)
-    crs_elapsed_time = Column(Float)
-
-    # Delay target
     arr_del15 = Column(Float)
-
-    # Distance information
+    crs_elapsed_time = Column(Float)
     distance = Column(Float)
     distance_group = Column(Float)
+    carrier_delay = Column(Float)
+    weather_delay = Column(Float)
+    nas_delay = Column(Float)
+    security_delay = Column(Float)
+    late_aircraft_delay = Column(Float)
+    first_dep_time = Column(Float)
+    total_add_gtime = Column(Float)
+    longest_add_gtime = Column(Float)
+
+    cancelled = Column(Boolean)
+    cancellation_code = Column(String)
+    diverted = Column(Boolean)

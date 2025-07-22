@@ -4,6 +4,8 @@ from alembic import context
 from sqlalchemy import engine_from_config, pool
 
 from database.base import Base
+from database.models.airline import Airline  # noqa: F401
+from database.models.airports import Airport  # noqa: F401
 from database.models.flight import Flight  # noqa: F401
 
 # this is the Alembic Config object, which provides
