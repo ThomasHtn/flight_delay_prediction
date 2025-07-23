@@ -1,19 +1,32 @@
 # Makefile
 
 # =====================================================================================
+# APP
+# =====================================================================================
+
+start-api:
+	uvicorn api.main:app --reload
+
+start-app:
+	streamlit run app/main.py
+
+# =====================================================================================
 # Database
 # =====================================================================================
 
 DB_PATH=./dump/flights.db
-CSV_PATH=./data/processed/cleaned_data.csv
 
 .PHONY: migrate upgrade seed reset
 
 clear-and-populate-db:
-	python scripts/clear_dataset.py
+	python scripts/clear_and_populate_db.py
 
-populate-db:
-	python scripts/populate_db.py $(CSV_PATH)
+# =====================================================================================
+# Training
+# =====================================================================================
+
+train:
+	python -s ml/training/train_model.py
 
 # =====================================================================================
 # Tests

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Float, String
+from sqlalchemy import Column, Float, String, Integer
 
 from database.base import Base
 
@@ -6,7 +6,8 @@ from database.base import Base
 class Airport(Base):
     __tablename__ = "airports"
 
-    code = Column(String, primary_key=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    code = Column(String, unique=True, nullable=False)
     city_name = Column(String)
     state_abbr = Column(String)
     state_fips = Column(Float)

@@ -6,6 +6,7 @@ from database.base import Base
 class Airline(Base):
     __tablename__ = "airlines"
 
-    unique_carrier = Column(String, primary_key=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    unique_carrier = Column(String, unique=True, nullable=False)
     airline_id = Column(Integer)
     carrier = Column(String)

@@ -116,6 +116,21 @@ Cela démarre :
 
 ---
 
+## Streamlit (front)
+Depuis la racine du projet :
+```batch
+streamlit run app/main.py
+```
+
+---
+## FastAPI (api)
+Depuis la racine du projet :
+```batch
+uvicorn api.main:app --reload
+```
+
+---
+
 ## ⚗️ Alembic
 
 ### Créer une nouvelle migration
@@ -136,3 +151,15 @@ Depuis la racine du projet :
 make populate-db
 ```
 Cela va utiliser par défaut le fichier **"cleaned_data.csv"** pour remplir la base de données.
+
+---
+
+##  Mlflow
+
+Lancer l'interface web
+
+```batch
+mlflow ui
+``` 
+
+Interface : http://localhost:5000

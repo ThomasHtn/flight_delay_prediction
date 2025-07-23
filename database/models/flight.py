@@ -15,12 +15,12 @@ class Flight(Base):
     day_of_week = Column(Integer)
     fl_date = Column(Date)
 
-    unique_carrier = Column(String, ForeignKey("airlines.unique_carrier"))
+    airline_id = Column(Integer, ForeignKey("airlines.id"))
     flight_num = Column(String)
     tail_num = Column(String)
 
-    origin = Column(String, ForeignKey("airports.code"))
-    dest = Column(String, ForeignKey("airports.code"))
+    origin_id = Column(Integer, ForeignKey("airports.id"))
+    dest_id = Column(Integer, ForeignKey("airports.id"))
 
     crs_dep_time = Column(Float)
     dep_time_blk = Column(String)
