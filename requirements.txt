@@ -13,3 +13,5 @@ joblib
 loguru
 mlflow
 optuna
+lightgbm
+streamlit

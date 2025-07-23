@@ -27,6 +27,9 @@ clear-and-populate-db:
 
 train:
 	python -s ml/training/train_model.py
+	
+evaluate:
+	python -s ml/evaluation/evaluate.py
 
 # =====================================================================================
 # Tests

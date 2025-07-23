@@ -1,39 +1,69 @@
+from typing import Dict
+
+from lightgbm import LGBMClassifier
+from sklearn.base import ClassifierMixin
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
-from sklearn.svm import SVC
+
+# ───────────────────────────────────────────────────────────────
+# Model Factory Functions
+# ───────────────────────────────────────────────────────────────
 
 
-def get_model(params: dict):
+def get_random_forest(params: Dict) -> RandomForestClassifier:
     """
-    Return a classification model instance based on params['model_type'].
-    Supported: 'random_forest', 'logistic_regression', 'svm'
+    Create a configured RandomForestClassifier instance.
     """
+    return RandomForestClassifier(
+        n_estimators=params.get("n_estimators", 100),
+        max_depth=params.get("max_depth", 10),
+        class_weight="balanced",
+        random_state=42,
+    )
 
+
+def get_logistic_regression(params: Dict) -> LogisticRegression:
+    """
+    Create a configured LogisticRegression instance.
+    """
+    return LogisticRegression(
+        C=params.get("logreg_C", 1.0),
+        max_iter=1000,
+        class_weight="balanced",
+        solver="liblinear",
+    )
+
+
+def get_lightgbm(params: Dict) -> LGBMClassifier:
+    """
+    Create a configured LightGBM classifier instance.
+    """
+    return LGBMClassifier(
+        n_estimators=params.get("lgbm_n_estimators", 100),
+        max_depth=params.get("lgbm_max_depth", -1),
+        class_weight="balanced",
+        random_state=42,
+        verbosity=-1,
+    )
+
+
+# ───────────────────────────────────────────────────────────────
+# Model Dispatcher
+# ───────────────────────────────────────────────────────────────
+
+
+def get_model(params: Dict) -> ClassifierMixin:
+    """
+    Return the appropriate classification model instance based on the 'model_type' key in params.
+    Supported values: 'random_forest', 'logistic_regression', 'lightgbm'.
+    """
     model_type = params.get("model_type", "random_forest")
 
     if model_type == "random_forest":
-        return RandomForestClassifier(
-            n_estimators=params.get("n_estimators", 100),
-            max_depth=params.get("max_depth", 10),
-            class_weight="balanced",
-            random_state=42,
-        )
-
+        return get_random_forest(params)
     elif model_type == "logistic_regression":
-        return LogisticRegression(
-            C=params.get("logreg_C", 1.0),
-            max_iter=1000,
-            class_weight="balanced",
-            solver="liblinear",
-        )
-
-    elif model_type == "svm":
-        return SVC(
-            C=params.get("svm_C", 1.0),
-            kernel=params.get("svm_kernel", "rbf"),
-            class_weight="balanced",
-            probability=True,
-        )
-
+        return get_logistic_regression(params)
+    elif model_type == "lightgbm":
+        return get_lightgbm(params)
     else:
         raise ValueError(f"Unsupported model type: {model_type}")

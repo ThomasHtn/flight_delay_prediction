@@ -123,11 +123,25 @@ streamlit run app/main.py
 ```
 
 ---
+
 ## FastAPI (api)
 Depuis la racine du projet :
 ```batch
 uvicorn api.main:app --reload
 ```
+
+---
+
+## Monitoring (Grafana + prometheus)
+Depuis le repertoire "monitoring" :
+```batch
+cd monitoring/
+docker-compose up -d
+```
+
+Interface : 
+Prometheus : http://localhost:9090
+Grafana	http://localhost:3000
 
 ---
 

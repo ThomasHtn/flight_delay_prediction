@@ -4,7 +4,7 @@ import streamlit as st
 st.set_page_config(page_title="Prédicteur de Retards de Vol", layout="centered")
 
 # Base API URL
-API_URL = "http://localhost:8000"
+API_URL = "http://fastapi:8000"
 PREDICT_ENDPOINT = f"{API_URL}/predict"
 HEALTH_ENDPOINT = f"{API_URL}/health"
 

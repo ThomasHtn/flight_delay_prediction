@@ -1,0 +1,49 @@
+name: Integration Test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test-stack:
+    runs-on: ubuntu-latest
+    services:
+      docker:
+        image: docker:20.10.7-dind
+        privileged: true
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v3
+
+    - name: Set up Docker Compose
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y docker-compose
+
+    - name: Build and start containers
+      run: |
+        docker-compose up -d --build
+        sleep 30  # Wait for containers
+
+    - name: Check FastAPI health
+      run: |
+        curl --fail http://localhost:8000/health
+
+    - name: Check Streamlit UI
+      run: |
+        curl --fail http://localhost:8501/
+
+    - name: Check Prometheus
+      run: |
+        curl --fail http://localhost:9090/
+
+    - name: Check Grafana
+      run: |
+        curl --fail http://localhost:3000/
+
+    - name: Cleanup
+      if: always()
+      run: docker-compose down

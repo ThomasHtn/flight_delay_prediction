@@ -1,0 +1,59 @@
+version: "3.8"
+
+services:
+  fastapi:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    container_name: fastapi_app
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./api:/app
+      - ./ml:/ml
+    environment:
+      - PYTHONPATH=/app
+    depends_on:
+      - prometheus
+
+  streamlit:
+    build:
+      context: .
+      dockerfile: ./app/Dockerfile
+    container_name: streamlit_app
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./app:/app
+    depends_on:
+      - fastapi
+
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards
+      - ./monitoring/grafana/dashboards.yml:/etc/grafana/provisioning/dashboards/dashboards.yml
+      - ./monitoring/grafana/datasource.yml:/etc/grafana/provisioning/datasources/datasources.yml
+    depends_on:
+      - prometheus
+
+  node-exporter:
+    image: prom/node-exporter
+    container_name: node_exporter
+    ports:
+      - "9100:9100"

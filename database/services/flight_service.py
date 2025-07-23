@@ -66,10 +66,10 @@ def load_training_data() -> pd.DataFrame:
     df = df.dropna()
     logger.success(f"{len(df)} total rows loaded before sampling.")
 
-    # Stratified sampling: keep 20% while preserving class distribution
+    # Stratified sampling: keep 10% while preserving class distribution
     _, df_sampled = train_test_split(
-        df, test_size=0.2, stratify=df["arr_del15"], random_state=42
+        df, test_size=0.1, stratify=df["arr_del15"], random_state=42
     )
 
-    logger.success(f"{len(df_sampled)} rows returned after 20% stratified sampling.")
+    logger.success(f"{len(df_sampled)} rows returned after 10% stratified sampling.")
     return df_sampled.reset_index(drop=True)
