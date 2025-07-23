@@ -9,10 +9,6 @@ on:
 jobs:
   test-stack:
     runs-on: ubuntu-latest
-    services:
-      docker:
-        image: docker:20.10.7-dind
-        privileged: true
 
     steps:
     - name: Checkout repo
