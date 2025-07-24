@@ -1,6 +1,5 @@
-from fastapi import FastAPI
-
 from endpoints import health, predict
+from fastapi import FastAPI
 
 app = FastAPI(title="Flight Delay Prediction API")
 

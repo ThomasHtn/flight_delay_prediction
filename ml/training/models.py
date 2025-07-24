@@ -17,7 +17,7 @@ def get_random_forest(params: Dict) -> RandomForestClassifier:
     return RandomForestClassifier(
         n_estimators=params.get("n_estimators", 100),
         max_depth=params.get("max_depth", 10),
-        class_weight="balanced",
+        class_weight=params.get("class_weight", None),
         random_state=42,
     )
 
@@ -29,7 +29,7 @@ def get_logistic_regression(params: Dict) -> LogisticRegression:
     return LogisticRegression(
         C=params.get("logreg_C", 1.0),
         max_iter=1000,
-        class_weight="balanced",
+        class_weight=params.get("class_weight", None),
         solver="liblinear",
     )
 
@@ -41,7 +41,7 @@ def get_lightgbm(params: Dict) -> LGBMClassifier:
     return LGBMClassifier(
         n_estimators=params.get("lgbm_n_estimators", 100),
         max_depth=params.get("lgbm_max_depth", -1),
-        class_weight="balanced",
+        class_weight=params.get("class_weight", None),
         random_state=42,
         verbosity=-1,
     )

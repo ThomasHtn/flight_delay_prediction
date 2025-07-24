@@ -15,3 +15,4 @@ mlflow
 optuna
 lightgbm
 streamlit
+imblearn

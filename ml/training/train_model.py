@@ -4,10 +4,15 @@ import sys
 import joblib
 import mlflow
 import mlflow.sklearn
+import numpy as np
 import optuna
+from imblearn.combine import SMOTEENN
+from imblearn.over_sampling import SMOTE
+from imblearn.under_sampling import RandomUnderSampler
 from sklearn.metrics import (
     accuracy_score,
     classification_report,
+    confusion_matrix,
     f1_score,
     precision_score,
     recall_score,
@@ -44,6 +49,16 @@ def train_model(params: dict):
     """
     df = load_training_data()
 
+    # Remove outliers
+    # Not used cause downgrade accuracy
+    # initial_len = len(df)
+    # for col in ["crs_dep_time", "crs_arr_time", "crs_elapsed_time", "distance"]:
+    #     df = outliers_filter(df, col)
+    # removed = initial_len - len(df)
+    # print(
+    #     f"Removed {removed} outliers from 'crs_dep_time', 'crs_arr_time','crs_elapsed_time' and 'distance'"
+    # )
+
     # Define feature types
     numerical_cols = [
         "month",
@@ -53,7 +68,12 @@ def train_model(params: dict):
         "crs_elapsed_time",
         "distance",
     ]
+
+    # Work only with id mode
+    # categorical_cols = ["airline_id", "origin_id", "dest_id", "dep_time_blk"]
+
     categorical_cols = ["unique_carrier", "origin", "dest", "dep_time_blk"]
+
     target_col = "arr_del15"
 
     y_raw = df[target_col]
@@ -64,7 +84,39 @@ def train_model(params: dict):
     )
     X_train, X_test, y_train, y_test = split(X_processed, y)
 
-    # Train selected model
+    # Balancing strategy
+    strategy = params.get("balance_strategy", "none")
+
+    if strategy == "smote":
+        smote = SMOTE(random_state=42)
+        X_train, y_train = smote.fit_resample(X_train, y_train)
+        print("[INFO] SMOTE applied for class balancing.")
+
+    elif strategy == "smoteen":
+        smote_enn = SMOTEENN(random_state=42)
+        X_train, y_train = smote_enn.fit_resample(X_train, y_train)
+        print("[INFO] SMOTEENN applied: SMOTE + undersampling.")
+
+    elif strategy == "undersample":
+        rus = RandomUnderSampler(random_state=42)
+        X_train, y_train = rus.fit_resample(X_train, y_train)
+        print("[INFO] RandomUnderSampler applied: majority class reduced.")
+
+    elif strategy == "class_weight":
+        params["class_weight"] = "balanced"
+        print("[INFO] Model will use class_weight='balanced'.")
+
+    else:
+        print("[INFO] No balancing strategy applied.")
+
+    # Display class distribution
+    print("=" * 50)
+    print("Training samples after balancing (if applied):")
+    print("Class 0:", np.sum(y_train == 0))
+    print("Class 1:", np.sum(y_train == 1))
+    print("=" * 50)
+
+    # Train model
     model = get_model(params)
     model.fit(X_train, y_train)
 
@@ -97,6 +149,7 @@ def objective(trial):
     """
     params = {
         "model_type": "lightgbm",
+        "balance_strategy": "undersample",
         "lgbm_n_estimators": trial.suggest_int("lgbm_n_estimators", 50, 300),
         "lgbm_max_depth": trial.suggest_int("lgbm_max_depth", 3, 15),
     }
@@ -120,10 +173,19 @@ def main():
 
         # Default hyperparameters for each model
         if model_type == "random_forest":
-            params = {"model_type": model_type, "n_estimators": 100, "max_depth": 10}
+            params = {
+                "model_type": model_type,
+                "n_estimators": 100,
+                "max_depth": 10,
+                "balance_strategy": "class_weight",
+            }
 
         elif model_type == "logistic_regression":
-            params = {"model_type": model_type, "logreg_C": 1.0}
+            params = {
+                "model_type": model_type,
+                "logreg_C": 1.0,
+                "balance_strategy": "class_weight",
+            }
 
         elif model_type == "lightgbm":
             print("🎯 Running Optuna for LightGBM...")
@@ -131,7 +193,11 @@ def main():
             study.optimize(objective, n_trials=10)
             print(f"✅ Best trial score: {study.best_trial.value}")
             print(f"✅ Best hyperparameters: {study.best_trial.params}")
-            params = {**study.best_trial.params, "model_type": "lightgbm"}
+            params = {
+                **study.best_trial.params,
+                "model_type": "lightgbm",
+                "balance_strategy": "class_weight",
+            }
 
         # Start MLflow tracking
         with mlflow.start_run(run_name=model_type):
