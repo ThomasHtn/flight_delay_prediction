@@ -34,8 +34,8 @@ jobs:
       - name: Build and push FastAPI image
         uses: docker/build-push-action@v5
         with:
-          context: ./flight_delay_prediction/api
-          file: ./flight_delay_prediction/api/Dockerfile
+          context: ./api
+          file: ./api/Dockerfile
           push: true
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/flight-delay-api:latest
@@ -46,8 +46,8 @@ jobs:
       - name: Build and push Streamlit image
         uses: docker/build-push-action@v5
         with:
-          context: ./flight_delay_prediction
-          file: ./flight_delay_prediction/app/Dockerfile
+          context: .
+          file: ./app/Dockerfile
           push: true
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/flight-delay-app:latest
